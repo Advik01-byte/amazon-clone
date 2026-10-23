@@ -68,7 +68,7 @@ document.querySelectorAll(".js-add-to-cart").forEach((button) => {
         const quantitySelector = document.querySelector(`.js-quantity-selector-${productId}`);
 
         addToCart(productId, quantitySelector);
-        updateCartQuantity();
+        updateCartQuantity(cart);
         addedToCartPopup(productId, addedTimeouts);
         
     });
