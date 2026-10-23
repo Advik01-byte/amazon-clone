@@ -59,10 +59,13 @@ export function addedToCartPopup(productId, addedTimeouts) {
 
 export function removeFromCart(productId) {
     const newCart = cart.filter(cartItem => cartItem.productId !== productId);
-
+    cart = newCart;
+    
+    /*
     cart.length = 0;
     newCart.forEach(item => cart.push(item));
     saveToStorage();
+    */
 }
 
 function saveToStorage() {
