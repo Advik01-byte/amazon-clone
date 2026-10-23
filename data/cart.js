@@ -1,4 +1,4 @@
-export const cart = [
+export let cart = [
     {
         productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
         quantity: 2
@@ -40,7 +40,7 @@ export function updateCartQuantity() {
     document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
 }
 
-export function addedToCartPopup(productId) {
+export function addedToCartPopup(productId, addedTimeouts) {
     const added = document.querySelector(`.js-added-to-cart-${productId}`);
     added.classList.add("added-to-cart-visible")
 
@@ -53,4 +53,10 @@ export function addedToCartPopup(productId) {
     }, 2000);
 
     addedTimeouts[productId] = timeoutId;
+}
+
+export function removeFromCart(productId) {
+    const newCart = cart.filter(cartItem => cartItem.productId !== productId);
+
+    cart = newCart;
 }

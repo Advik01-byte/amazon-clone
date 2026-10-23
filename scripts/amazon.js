@@ -69,7 +69,7 @@ document.querySelectorAll(".js-add-to-cart").forEach((button) => {
 
         addToCart(productId, quantitySelector);
         updateCartQuantity();
-        addedToCartPopup(productId);
+        addedToCartPopup(productId, addedTimeouts);
         
     });
 });
