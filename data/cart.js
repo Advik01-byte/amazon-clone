@@ -1,15 +1,22 @@
-export let cart = JSON.parse(localStorage.getItem("cart"));
+export let cart = JSON.parse(localStorage.getItem("cart")); // null if no cart exists in local storage
 
-if (!cart || cart.length === 0) {
+if (!cart) {
+    cart = [];
+} else if (cart.length === 0) {
     cart = [
         {
             productId: "15b6fc6f-327a-4ec4-896f-486349e85a3d",
-            quantity: 1
+            quantity: 1,
+            defaultValue: true
         }
     ];
 }
 
 export function addToCart(productId, quantitySelector) {
+    if (cart[0].defaultValue) {
+        cart.splice(0, 1);
+    }
+
     let matchingItem;
 
     cart.forEach(cartItem => {
@@ -59,13 +66,10 @@ export function addedToCartPopup(productId, addedTimeouts) {
 
 export function removeFromCart(productId) {
     const newCart = cart.filter(cartItem => cartItem.productId !== productId);
-    cart = newCart;
     
-    /*
-    cart.length = 0;
-    newCart.forEach(item => cart.push(item));
+    cart = newCart;
     saveToStorage();
-    */
+    
 }
 
 function saveToStorage() {
