@@ -75,3 +75,7 @@ export function removeFromCart(productId) {
 function saveToStorage() {
     localStorage.setItem("cart", JSON.stringify(cart));
 }
+
+export function updateCartQuantityCheckout() {
+    document.querySelector(".js-items-in-checkout").innerHTML = cart.length;
+}
