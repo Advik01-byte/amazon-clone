@@ -1,4 +1,4 @@
-import { cart, removeFromCart, updateCartQuantityCheckout } from "../data/cart.js";
+import { cart, removeFromCart, updateCartQuantityCheckout, updateQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
@@ -33,12 +33,15 @@ cart.forEach(cartItem => {
                     $${formatCurrency(matchingProduct.priceCents)}
                 </div>
                 <div class="product-quantity">
-                    <span>
+                    <span class="js-quantity-label-${matchingProduct.id}">
                     Quantity: <span class="quantity-label">${cartItem.quantity}</span>
                     </span>
-                    <span class="update-quantity-link link-primary">
+                    <span class="update-quantity-link link-primary js-update-link" data-product-id="${matchingProduct.id}">
                     Update
                     </span>
+                    <!-- FIXED: Added the template dynamic class hook here -->
+                    <input class="quantity-input js-quantity-input-${matchingProduct.id}">
+                    <span class="save-quantity-link link-primary js-save-link" data-product-id="${matchingProduct.id}">Save</span>
                     <span class="delete-quantity-link link-primary js-delete-quantity-link" data-product-id="${matchingProduct.id}">
                     Delete
                     </span>
@@ -105,5 +108,77 @@ document.querySelectorAll(".js-delete-quantity-link").forEach(link => {
         removeFromCart(productId);
         updateCartQuantityCheckout();
         document.querySelector(`.js-cart-item-container-${productId}`).remove();
+    });
+});
+
+document.querySelectorAll(".js-update-link").forEach(link => {
+    link.addEventListener("click", () => {
+        const { productId } = link.dataset;
+
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+        const quantityLabel = document.querySelector(`.js-quantity-label-${productId}`);
+        const quantityInput = document.querySelector(`.js-quantity-input-${productId}`);
+
+        container.classList.add("is-editing-quantity");
+        link.classList.add("update-link-invisible");
+        quantityLabel.innerHTML = "Quantity: ";
+
+        let oldQuantity = 0;
+
+        cart.forEach(cartItem => {
+            if (cartItem.productId === productId) {
+                oldQuantity = cartItem.quantity;
+            }
+        });
+
+        quantityInput.value = oldQuantity;
+    });
+});
+
+function addKeyboardSupport(container, quantityInput, productId, quantityLabel) {
+    container.classList.remove("is-editing-quantity");
+
+    if (quantityInput.value.trim() === "") {
+        let originalQuantity = 0;
+
+        cart.forEach(cartItem => {
+            if (cartItem.productId === productId) {
+                originalQuantity = cartItem.quantity;
+            }
+        });
+
+        quantityLabel.innerHTML = `Quantity: <span class="quantity-label">${originalQuantity}</span>`;
+    } else {
+        const newQuantity = Number(quantityInput.value);
+        
+        if (newQuantity < 0 || isNaN(newQuantity) || newQuantity > 1000) {
+            alert("Please enter a valid quantity.");
+        } else if (newQuantity === 0) {
+            removeFromCart(productId);
+            updateCartQuantityCheckout();
+            document.querySelector(`.js-cart-item-container-${productId}`).remove();
+        }
+    
+        quantityLabel.innerHTML = `Quantity: <span class="quantity-label">${newQuantity}</span>`;
+
+        updateQuantity(productId, newQuantity);
+    }
+}
+
+document.querySelectorAll(".js-save-link").forEach(link => {
+    link.addEventListener("click", () => {
+        const { productId } = link.dataset;
+
+        const container = document.querySelector(`.js-cart-item-container-${productId}`);
+        const quantityLabel = document.querySelector(`.js-quantity-label-${productId}`);
+        const quantityInput = document.querySelector(`.js-quantity-input-${productId}`);
+
+        addKeyboardSupport(container, quantityInput, productId, quantityLabel);
+
+        quantityInput.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                addKeyboardSupport();
+            }
+        });
     });
 });
