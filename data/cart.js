@@ -1,3 +1,5 @@
+import { getProduct } from "./products.js";
+
 export let cart = JSON.parse(localStorage.getItem("cart")); // null if no cart exists in local storage
 
 if (!cart) {
@@ -5,13 +7,7 @@ if (!cart) {
 }
 
 export function addToCart(productId, quantitySelector) {
-    let matchingItem;
-
-    cart.forEach(cartItem => {
-        if (productId === cartItem.productId) {
-            matchingItem = cartItem;
-        }
-    });
+    const matchingItem = getProduct(productId);
 
     if (matchingItem) {
         matchingItem.quantity += Number(quantitySelector.value);
@@ -70,12 +66,7 @@ export function updateCartQuantityCheckout() {
 }
 
 export function updateQuantity(productId, newQuantity) {
-    let matchingProduct;
-    cart.forEach(cartItem => {
-        if (cartItem.productId === productId) {
-            matchingProduct = cartItem;
-        }
-    });
+    const matchingProduct = getProduct(productId);
 
     matchingProduct.quantity = newQuantity;
 
@@ -83,13 +74,7 @@ export function updateQuantity(productId, newQuantity) {
 }
 
 export function updateDeliveryOption(productId, deliveryOptionId) {
-    let matchingItem;
-
-    cart.forEach(cartItem => {
-        if (productId === cartItem.productId) {
-            matchingItem = cartItem;
-        }
-    });
+    const matchingItem = getProduct(productId);
 
     matchingItem.deliveryOptionId = deliveryOptionId;
 
